@@ -45,15 +45,16 @@ logger = logging.getLogger()
 logger.handlers[0].setFormatter(CustomFormatter())  # Update default handler
 
 config = {
-    'lower_percentile': 15,
-    'upper_percentile': 90,
-    'clahe_clip_limit': 0.05,
-    'log_scale': 100,
-    'num_images': 1,
-    'apply_log_scale': True,
-    'apply_clipping': True,
-    'apply_clahe': True
+    'lower_percentile': 15,       # Lower percentile for intensity clipping; pixels below this percentile will be clipped.
+    'upper_percentile': 90,       # Upper percentile for intensity clipping; pixels above this percentile will be clipped.
+    'clahe_clip_limit': 0.05,     # Clip limit for CLAHE; higher values give more contrast.
+    'log_scale': 100,             # Scaling factor for logarithmic adjustment; adjusts the compression of dynamic range.
+    'num_images': 1,              # Number of images to process; 0 means process all images in the directory.
+    'apply_log_scale': True,      # Whether to apply logarithmic scaling to the image data.
+    'apply_clipping': True,       # Whether to apply intensity clipping to the image data.
+    'apply_clahe': True           # Whether to apply CLAHE to the image data.
 }
+
 
 def apply_image_processing(image_data, config):
     logging.debug("Starting image processing...")
