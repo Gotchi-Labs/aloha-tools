@@ -13,6 +13,7 @@
     - [Script Output](#script-output)
   - [Script Details](#script-details)
     - [Main Functions](#main-functions)
+    - [Global Normalization Variables](#global-normalization-variables)
   - [Scientific Approach](#scientific-approach)
     - [Data Management and Reduction](#data-management-and-reduction)
     - [Integrity Preservation](#integrity-preservation)
@@ -39,8 +40,13 @@ This project provides a Python script designed to process FITS (Flexible Image T
    - Metadata for each tile is generated and saved in a JSON file, including a unique hash to identify the tile content.
 
 2. **Duplicate Detection**:
+
    - Scans all generated metadata files to identify and log duplicate tiles based on their hash values.
    - Ensures precise detection of exoplanet transits by preserving all data integrity.
+
+3. **Consistent Global Normalization**:
+   - Utilizes predefined global minimum and maximum values for normalization to ensure all tiles have consistent brightness.
+   - Allows for fine-tuning of these values to achieve optimal visual representation of the night sky images.
 
 ## Requirements
 
@@ -116,11 +122,19 @@ project_root/
 - **fits_to_tiles(fits_file, output_dir, tile_size=500)**:
   - Processes the FITS file into 500x500 pixel tiles.
   - Saves each tile as an image and generates metadata, including the tile's hash.
+  - Normalizes the tile data using predefined global minimum and maximum values to ensure consistent brightness across all tiles.
 - **find_duplicates(metadata_dir)**:
   - Scans metadata JSON files in the specified directory.
   - Identifies and logs duplicate tiles based on their hash values.
 - **main()**:
   - Orchestrates the entire process: reading FITS files, processing them into tiles, generating metadata, and checking for duplicates.
+
+### Global Normalization Variables
+
+- **GLOBAL_MIN**:
+  - Predefined global minimum value for normalization. Adjust this value to fine-tune the brightness of the tiles. Default is `0`.
+- **GLOBAL_MAX**:
+  - Predefined global maximum value for normalization. Adjust this value to fine-tune the brightness of the tiles. Default is `1000`.
 
 ## Scientific Approach
 
@@ -182,7 +196,9 @@ This JSON format provides comprehensive information about each star, including i
 
 ### Future Work
 
-While the AI component is currently theoretical, we envision using the generated metadata to train AI models that can further enhance our understanding of the cosmos. By leveraging machine learning techniques, we aim to develop tools that can automatically analyze vast amounts of astronomical data, identify patterns, and predict stellar phenomena.
+While the AI component is currently theoretical, we envision using the generated metadata to train AI models that can further enhance our understanding of the cosmos. By leveraging machine learning techniques, we aim to develop tools that can automatically analyze vast amounts of astronomical data, identify patterns, and predict stellar
+
+phenomena.
 
 ## Example Output
 

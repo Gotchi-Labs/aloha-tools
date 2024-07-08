@@ -45,6 +45,10 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger()
 logger.handlers[0].setFormatter(CustomFormatter())  # Update default handler
 
+# Predefined global minimum and maximum values for normalization
+GLOBAL_MIN = 0    # Adjust this value as needed
+GLOBAL_MAX = 1000 # Adjust this value as needed
+
 def calculate_hash(image):
     """
     Calculates the SHA-256 hash of an image.
@@ -61,7 +65,7 @@ def calculate_hash(image):
 def fits_to_tiles(fits_file, output_dir, tile_size=500):
     """
     Processes a FITS file into 500x500 pixel tiles, saves each tile as a separate image,
-    and generates a JSON file with metadata for each tile.
+    and generates a JSON file with metadata for each tile using predefined global normalization.
 
     Parameters:
     fits_file (str): Path to the input FITS file.
@@ -116,14 +120,11 @@ def fits_to_tiles(fits_file, output_dir, tile_size=500):
             tile = image_data[i * tile_size:(i + 1) * tile_size,
                               j * tile_size:(j + 1) * tile_size]
 
-            # Normalize the tile data to the range [0, 65535] for 16-bit
-            tile_min = np.min(tile)
-            tile_max = np.max(tile)
-            if tile_max == tile_min:
-                logger.warning(f"Tile ({i}, {j}) has uniform value")
-                normalized_tile = np.zeros((tile_size, tile_size), dtype=np.uint16)
-            else:
-                normalized_tile = ((tile - tile_min) / (tile_max - tile_min) * 65535).astype(np.uint16)
+            # Normalize the tile data to the range [0, 65535] for 16-bit using predefined global min and max
+            normalized_tile = ((tile - GLOBAL_MIN) / (GLOBAL_MAX - GLOBAL_MIN) * 65535).astype(np.uint16)
+
+            # Clip values to the range [0, 65535]
+            normalized_tile = np.clip(normalized_tile, 0, 65535)
 
             # Calculate hash for the tile
             tile_hash = calculate_hash(normalized_tile)
